@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -75,4 +76,12 @@ public class DroneService {
         return droneRepo.saveAndFlush(drone);
     }
 
+    @Scheduled(cron = "0 * * * * ?")
+    public void checkDronesBatteries() {
+        List<Drone> drones = droneRepo.findAll();
+
+        for (Drone drone : drones) {
+            logger.info("Drone '{}' Battery Level: {}%", drone.getSerialNumber(), drone.getBatteryCapacity().toString());
+        }
+    }
 }
