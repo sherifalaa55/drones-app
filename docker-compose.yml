@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: postgres-db
+    restart: always
+    environment:
+      POSTGRES_USER: drone_user
+      POSTGRES_PASSWORD: drone_pass
+      POSTGRES_DB: drone_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - drone-network
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: drone-app
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/drone_db
+      SPRING_DATASOURCE_USERNAME: drone_user
+      SPRING_DATASOURCE_PASSWORD: drone_pass
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: "true"
+      SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+      - postgres
+    networks:
+      - drone-network
+
+volumes:
+  postgres_data:
+
+networks:
+  drone-network:
+    driver: bridge
