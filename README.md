@@ -70,6 +70,74 @@ Docker Compose simplifies the process by orchestrating both the application and 
 
 ---
 
+## API Endpoints
+
+The application exposes several RESTful endpoints to manage drones and their medications.
+
+### Register a Drone
+
+- **URL**: `/api/v1/drones/register`
+- **Method**: `POST`
+- **Headers**: `Content-Type: application/json`
+- **Body**:
+
+  ```json
+  {
+    "serialNumber": "DRONE001",
+    "model": "LIGHTWEIGHT",
+    "batteryLevel": 80,
+    "weightLimit": 500,
+    "state": "IDLE"
+  }
+  ```
+
+- **Responses**:
+   - `201 Created`: Drone registered successfully.
+   - `400 Bad Request`: Validation errors or drone limit exceeded.
+
+### Load Medications into a Drone
+
+- **URL**: `/api/v1/drones/{serialNumber}/load`
+- **Method**: `POST`
+- **Headers**: `Content-Type: application/json`
+- **Body**:
+
+  ```json
+  [
+    {
+      "name": "Aspirin",
+      "code": "ASP_001",
+      "weight": 50,
+      "image": "http://example.com/images/aspirin.png"
+    },
+    {
+      "name": "Paracetamol",
+      "code": "PARA_002",
+      "weight": 30,
+      "image": "http://example.com/images/paracetamol.png"
+    }
+  ]
+  ```
+
+
+### Get Available Drones
+
+- **URL**: `/api/v1/drones/available`
+- **Method**: `GET`
+- **Headers**: `Content-Type: application/json`
+- 
+### Get Drone Medications
+
+- **URL**: `/api/v1/drones/{serialNumber}/medications`
+- **Method**: `GET`
+- **Headers**: `Content-Type: application/json`
+
+### Get Drone Battery Level
+
+- **URL**: `/api/v1/drones/{serialNumber}/battery`
+- **Method**: `GET`
+- **Headers**: `Content-Type: application/json`
+
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
