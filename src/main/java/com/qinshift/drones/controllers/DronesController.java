@@ -2,6 +2,7 @@ package com.qinshift.drones.controllers;
 
 import com.qinshift.drones.domain.Drone;
 import com.qinshift.drones.domain.Medication;
+import com.qinshift.drones.dto.BatteryLevelResponse;
 import com.qinshift.drones.dto.DroneDto;
 import com.qinshift.drones.dto.MedicationDto;
 import com.qinshift.drones.enums.DroneState;
@@ -42,7 +43,8 @@ public class DronesController {
                         "Drone with serial number " + serialNumber + " not found."));
 
         // fetch battery level
-        return ResponseEntity.ok(drone.getBatteryCapacity());
+        BatteryLevelResponse response = new BatteryLevelResponse(serialNumber, drone.getBatteryCapacity());
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{serialNumber}/medications")

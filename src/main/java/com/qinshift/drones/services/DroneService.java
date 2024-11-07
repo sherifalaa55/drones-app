@@ -37,14 +37,14 @@ public class DroneService {
 
         Drone drone = modelMapper.map(droneDto, Drone.class);
 
-        return droneRepo.saveAndFlush(drone);
+        return droneRepo.save(drone);
     }
 
     public Drone loadDrone(Drone drone, List<MedicationDto> medsDto) throws Exception {
 
         // check if drone is idle
         if (!drone.getState().equals(DroneState.IDLE)) {
-            throw new Exception("Drone must be idle");
+            throw new Exception("Drone must be in idle state in order to be loaded");
         }
 
         if (drone.getBatteryCapacity() < MIN_BATTERY_CAPACITY) {
@@ -74,7 +74,7 @@ public class DroneService {
 
         drone.getMedications().addAll(medicationsToLoad);
 
-        return droneRepo.saveAndFlush(drone);
+        return droneRepo.save(drone);
     }
 
     @Scheduled(cron = "0 * * * * ?")
