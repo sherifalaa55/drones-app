@@ -20,7 +20,8 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class DroneService {
-
+    private static final long MAX_DRONES = 10;
+    private static final long MIN_BATTERY_CAPACITY = 25;
     private static final Logger logger = LoggerFactory.getLogger(DroneService.class);
 
     private final ModelMapper modelMapper;
@@ -30,7 +31,7 @@ public class DroneService {
     public Drone register(DroneDto droneDto) throws Exception {
         long currentDroneCount = droneRepo.count();
 
-        if (currentDroneCount == 10) {
+        if (currentDroneCount == MAX_DRONES) {
             throw new Exception("Unable to register more than 10 drones");
         }
 
@@ -46,7 +47,7 @@ public class DroneService {
             throw new Exception("Drone must be idle");
         }
 
-        if (drone.getBatteryCapacity() < 25) {
+        if (drone.getBatteryCapacity() < MIN_BATTERY_CAPACITY) {
             throw new Exception("Cannot load drone with battery level below 25%");
         }
 
