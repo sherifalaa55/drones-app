@@ -11,10 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Setter
@@ -45,5 +42,5 @@ public class Drone {
 
     @OneToMany(mappedBy = "drone", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    private List<Medication> medications;
+    private List<Medication> medications = new ArrayList<>();
 }
