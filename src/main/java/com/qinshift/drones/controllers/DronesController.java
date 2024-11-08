@@ -25,36 +25,27 @@ import java.util.List;
 public class DronesController {
 
     private final DroneService droneService;
-    @Autowired
-    private final DroneRepository droneRepo;
 
     @GetMapping("/available")
     public ResponseEntity GetAvailableDrones() {
-        List<Drone> drones = droneRepo.findAllByState(DroneState.IDLE);
+        List<Drone> drones = droneService.getAvailableDrones();
 
         return ResponseEntity.ok(drones);
     }
 
     @GetMapping("/{serialNumber}/battery")
     public ResponseEntity checkBatteryLevel(@PathVariable("serialNumber") String serialNumber) throws Exception {
-        // get the drone by serial number
-        Drone drone = droneRepo.findBySerialNumber(serialNumber)
-                .orElseThrow(() -> new Exception(
-                        "Drone with serial number " + serialNumber + " not found."));
+
+        Double batteryLevel = droneService.getDroneBatteryLevel(serialNumber);
 
         // fetch battery level
-        BatteryLevelResponse response = new BatteryLevelResponse(serialNumber, drone.getBatteryCapacity());
+        BatteryLevelResponse response = new BatteryLevelResponse(serialNumber, batteryLevel);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{serialNumber}/medications")
     public ResponseEntity getLoadedMedications(@PathVariable("serialNumber") String serialNumber) throws Exception {
-        // get drone by serial nubmer
-        Drone drone = droneRepo.findBySerialNumber(serialNumber)
-                .orElseThrow(() -> new Exception(
-                        "Drone with serial number " + serialNumber + " not found."));
-
-        List<Medication> medications = drone.getMedications();
+        List<Medication> medications = droneService.getDroneMedication(serialNumber);
 
         return ResponseEntity.ok(medications);
     }
@@ -67,10 +58,7 @@ public class DronesController {
 
     @PostMapping("/{serialNumber}/load")
     public ResponseEntity loadDrone(@PathVariable("serialNumber") String serialNumber, @RequestBody List<@Valid MedicationDto> medDto) throws Exception {
-        Drone drone = droneRepo.findBySerialNumber(serialNumber)
-                .orElseThrow(() -> new Exception(
-                        "Drone with serial number " + serialNumber + " not found."));
-        drone = droneService.loadDrone(drone, medDto);
+        Drone drone = droneService.loadDrone(serialNumber, medDto);
         return new ResponseEntity<Drone>(drone, HttpStatus.OK);
     }
 }

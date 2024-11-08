@@ -28,6 +28,30 @@ public class DroneService {
 
     private final DroneRepository droneRepo;
 
+    public List<Drone> getAvailableDrones() {
+        List<Drone> drones = droneRepo.findAllByState(DroneState.IDLE);
+
+        return drones;
+    }
+
+    public double getDroneBatteryLevel(String serialNumber) throws Exception {
+        Drone drone = droneRepo.findBySerialNumber(serialNumber)
+                .orElseThrow(() -> new Exception(
+                        "Drone with serial number " + serialNumber + " not found."));
+
+        return drone.getBatteryCapacity();
+    }
+
+    public List<Medication> getDroneMedication(String serialNumber) throws Exception {
+        Drone drone = droneRepo.findBySerialNumber(serialNumber)
+                .orElseThrow(() -> new Exception(
+                        "Drone with serial number " + serialNumber + " not found."));
+
+        List<Medication> medications = drone.getMedications();
+
+        return medications;
+    }
+
     public Drone register(DroneDto droneDto) throws Exception {
         long currentDroneCount = droneRepo.count();
 
@@ -40,7 +64,10 @@ public class DroneService {
         return droneRepo.save(drone);
     }
 
-    public Drone loadDrone(Drone drone, List<MedicationDto> medsDto) throws Exception {
+    public Drone loadDrone(String serialNumber, List<MedicationDto> medsDto) throws Exception {
+        Drone drone = droneRepo.findBySerialNumber(serialNumber)
+                .orElseThrow(() -> new Exception(
+                        "Drone with serial number " + serialNumber + " not found."));
 
         // check if drone is idle
         if (!drone.getState().equals(DroneState.IDLE)) {
